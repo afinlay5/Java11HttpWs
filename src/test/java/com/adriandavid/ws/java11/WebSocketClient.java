@@ -27,7 +27,7 @@ SOFTWARE.
 ==============================================================================
 **/
 
-package com.adriandavid.java11.ws;
+// package com.adriandavid.java11.ws;
 
 import java.net.URI;
 import java.net.http.WebSocket;

@@ -31,16 +31,22 @@ SOFTWARE.
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import static java.net.http.WebSocket.NORMAL_CLOSURE;
 
 public class WebSocketDemo {
+
+	static WebSocketServer ws;
 	
 	public static void main (String[] args) {
         try {
-	        var server = new WebSocketServer().getWebSocket();
-	        server.sendPing(ByteBuffer.wrap("Ping: Client <--- Server".getBytes(Charset.forName("UTF-16"))));
-	        server.sendPing(ByteBuffer.wrap("Pong: Client <--- Server".getBytes(Charset.forName("UTF-16"))));
-	        server.sendText("Hello!", false);
-	        server.sendClose(1001, "Goodbye!");
+			WebSocketDemo.ws = new WebSocketServer();
+			var server = ws.initializeServer();
+			var clientSocket = server.accept();
+	        var socket = ws.getWebSocket();
+	        socket.sendPing(ByteBuffer.wrap("Ping: Client <--- Server".getBytes(Charset.forName("UTF-16"))));
+	        socket.sendPing(ByteBuffer.wrap("Pong: Client <--- Server".getBytes(Charset.forName("UTF-16"))));
+	        socket.sendText("Hello!", false);
+	        socket.sendClose(NORMAL_CLOSURE, "Goodbye!");
 	    } catch (Exception e) { 
 	    	System.out.println("Failure:" + e.getClass().toString().replace("class", "") + " was thrown.\nMessage: " + e.getMessage()); 
 	    	
@@ -51,7 +57,10 @@ public class WebSocketDemo {
 	    		ex.headers().map().forEach( (k,v)-> System.out.println("\t" + k + ":  " + v));
 	    		System.out.println("HTTP request:  " + ex.request());
 	    		System.out.println("HTTP version:  " + ex.version());
-	    		System.out.println("Previous Reponse?:  " + ex.previousResponse());
+				System.out.println("Previous Reponse?:  " + ex.previousResponse());
+				System.out.println("Stack trace:");
+				for (var el : e.getStackTrace()) 
+					System.out.println("\t" + el);
 	    	}
     	}
 	};
