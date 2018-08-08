@@ -1,6 +1,6 @@
 # New Java 11 API: java.net.http
 Java source code example demonstrating use of the new java.net.http.* API, posted on personal blog (http://bit.ly/JavaHttp2).
-Built and tested  with openJDK EA Build 25 on Fedora Linux 28.
+Built and tested  with openJDK 11 EA Build 25 on Fedora Linux 28.
 
 ![alt text](https://raw.githubusercontent.com/afinlay5/Java11HttpWs/master/blog.png)
 
