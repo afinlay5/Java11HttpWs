@@ -30,27 +30,27 @@ SOFTWARE.
 // package com.adriandavid.java11.ws;
 
 import java.net.URI;
+import java.net.ProxySelector;
 import java.net.http.WebSocket;
-import java.net.ServerSocket;
 import java.net.http.HttpClient;
+import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.CompletableFuture;
 
 /* WebSockets in Java 11 */
 public class WebSocketServer {
 	private final CompletableFuture<WebSocket> server_cf;
-	private final WebSocket socket;
-	private final WebSocket.Listener client;
-	private final String ENDPOINT = "ws://localhost:80/websocket"; // /websocket
+	private final String ENDPOINT = "ws://localhost:80"; //
 
 	WebSocketServer () throws InterruptedException, ExecutionException {
-		client = new WebSocketClient();
-		server_cf = HttpClient.newHttpClient().newWebSocketBuilder().buildAsync(URI.create(ENDPOINT), client);
-		socket = server_cf.get();
+		this.server_cf = HttpClient
+							.newBuilder()
+							.proxy(ProxySelector.of(new java.net.InetSocketAddress("localhost", 80)))
+							.build()
+							.newWebSocketBuilder()
+							.subprotocols("80")
+							.buildAsync(URI.create(ENDPOINT), new WebSocketClient());
 	}
 
-	WebSocket getWebSocket() { return this.socket; };
-	ServerSocket initializeServer() throws Exception { 
-		return new ServerSocket (80);
-	}
+	CompletableFuture<WebSocket> getServerCf() { return this.server_cf; };
 }

@@ -31,25 +31,25 @@ SOFTWARE.
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.net.http.WebSocket;
 import static java.net.http.WebSocket.NORMAL_CLOSURE;
+import java.util.concurrent.CompletableFuture;
 
-public class WebSocketDemo {
-
-	static WebSocketServer ws;
-	
+public class WebSocketDemo {	
 	public static void main (String[] args) {
         try {
-			WebSocketDemo.ws = new WebSocketServer();
-			var server = ws.initializeServer();
-			var clientSocket = server.accept();
-	        var socket = ws.getWebSocket();
-	        socket.sendPing(ByteBuffer.wrap("Ping: Client <--- Server".getBytes(Charset.forName("UTF-16"))));
-	        socket.sendPing(ByteBuffer.wrap("Pong: Client <--- Server".getBytes(Charset.forName("UTF-16"))));
-	        socket.sendText("Hello!", false);
-	        socket.sendClose(NORMAL_CLOSURE, "Goodbye!");
+			var ws = new WebSocketServer();
+			var ws_cf = ws.getServerCf();
+			var socket = (WebSocket) ws_cf.get();
+
+			socket.sendPing(ByteBuffer.wrap("Ping: Client <--- Server".getBytes(Charset.forName("UTF-16"))));
+	        socket.sendPong(ByteBuffer.wrap("Pong: Client <--- Server".getBytes(Charset.forName("UTF-16"))));
+			socket.sendText("Hello!", false);
+			
+			socket.sendClose(NORMAL_CLOSURE, "Goodbye!");
 	    } catch (Exception e) { 
-	    	System.out.println("Failure:" + e.getClass().toString().replace("class", "") + " was thrown.\nMessage: " + e.getMessage()); 
-	    	
+			System.out.println("Failure:" + e.getClass().toString().replace("class", "") + " was thrown.\nMessage: " + e.getMessage()); 
+						
 	    	if (e.getMessage().contains("WebSocketHandshakeException")) {
 	    		var ex = ((java.net.http.WebSocketHandshakeException) e.getCause()).getResponse();
 	    		System.out.println("Body:\t" + ex.body());
@@ -58,10 +58,11 @@ public class WebSocketDemo {
 	    		System.out.println("HTTP request:  " + ex.request());
 	    		System.out.println("HTTP version:  " + ex.version());
 				System.out.println("Previous Reponse?:  " + ex.previousResponse());
-				System.out.println("Stack trace:");
-				for (var el : e.getStackTrace()) 
-					System.out.println("\t" + el);
-	    	}
+			} 
+
+			System.out.println("Stack trace:");
+			for (var el : e.getStackTrace()) 
+				System.out.println("\t" + el);
     	}
 	};
 };
