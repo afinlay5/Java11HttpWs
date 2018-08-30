@@ -31,6 +31,7 @@ SOFTWARE.
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import static java.net.http.WebSocket.NORMAL_CLOSURE;
 
 public class WebSocketDemo {
 	
@@ -40,7 +41,7 @@ public class WebSocketDemo {
 	        server.sendPing(ByteBuffer.wrap("Ping: Client <--- Server".getBytes(Charset.forName("UTF-16"))));
 	        server.sendPing(ByteBuffer.wrap("Pong: Client <--- Server".getBytes(Charset.forName("UTF-16"))));
 	        server.sendText("Hello!", false);
-	        server.sendClose(1001, "Goodbye!");
+	        server.sendClose(NORMAL_CLOSURE, "Goodbye!");
 	    } catch (Exception e) { 
 	    	System.out.println("Failure:" + e.getClass().toString().replace("class", "") + " was thrown.\nMessage: " + e.getMessage()); 
 	    	
